@@ -1,0 +1,7 @@
+Aspect	Stage 1 (Vague)	Stage 2 (Format)	Stage 3 (Detailed)
+Chromosome scope	Everything	chrom.sizes only	chrom.sizes + zero-fill
+Exon definition	Duplicate-counted	Unique interval	Unique interval
+QC artifact	None	dropped_seqids.txt	Count + line count + file
+Density	None	None	4 per_Mb columns
+Sorting	None	None	gene_per_Mb descending
+Reusability	Low	Medium	High (publication-ready)
