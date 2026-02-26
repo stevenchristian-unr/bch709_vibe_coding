@@ -1,0 +1,11 @@
+name: gene-heatmap
+dependencies:
+  - python=3.11
+  - pandas
+  - numpy
+  - matplotlib
+  - seaborn
+  - jupyter
+  - pip
+channels:
+  - conda-forge
