@@ -12,7 +12,7 @@ suppressPackageStartupMessages({
 # Input and output paths
 input_file <- "results/yeast_stress_cv_top200.tsv"
 output_dir <- "results"
-heatmap_file <- file.path(output_dir, "cv_top200_cluster_heatmap_02.png")
+heatmap_file <- file.path(output_dir, "cv_top200_cluster_heatmap.png")
 cluster_file <- file.path(output_dir, "cluster_assignment.tsv")
 
 # Create results/ directory if needed
@@ -125,8 +125,7 @@ pheatmap(
   fontsize = 10,
   fontsize_row = 6,
   fontsize_col = 9,
-  main = "Top 200 Variable Yeast Stress Genes (Z-score, First 30 Conditions)",
-  silent = TRUE
+  main = "Top 200 Variable Yeast Stress Genes (Z-score, First 30 Conditions)"
 )
 dev.off()
 
