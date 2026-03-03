@@ -92,3 +92,189 @@ Gene expression and translation optimization (codon usage bias):
 
 Regional/functional constraints on sequence composition:
    Yeast genes vary in features like UTR length, regulatory motifs, and amino acid composition constraints (which indirectly constrain codons). In addition, mutational processes and DNA repair/replication biases can differ across genomic regions, and transcript sets sampled from those regions can inherit distinct GC tendencies—contributing to multimodality or skew in transcript GC content.
+
+
+# Homework 2 — Clustering Top 200 Yeast Stress-Response Genes  
+**Course:** BCH709 Bioinformatics  
+
+---
+
+## Project Overview
+
+This assignment investigates whether the **top 200 most variable yeast stress-response genes** form **distinct expression clusters**, and what biological patterns characterize those clusters.
+
+Using hierarchical clustering on normalized expression data, we determine whether stress-responsive genes group into reproducible expression modules.
+
+---
+
+## Input Data
+
+**File:**
+```
+results/yeast_stress_cv_top200.tsv
+```
+
+**Format assumptions:**
+- 200 genes (rows)
+- A `gene_id` column
+- Remaining columns contain **log2 expression ratios**
+- The first 30 stress-condition columns are used for clustering
+- Columns are kept in their **original order**
+- Any metadata columns must be excluded from calculations
+
+---
+
+## Analysis Workflow
+
+The R script performs the following steps:
+
+### 1. Column Selection
+- Extract the first **30 stress-condition columns**
+- Do **not** cluster columns in the heatmap
+
+---
+
+### 2. Row-wise Z-score Normalization
+
+For each gene:
+
+\[
+z = \frac{x - \text{row\_mean}}{\text{row\_sd}}
+\]
+
+Where:
+- `row_mean` = mean expression across the 30 conditions
+- `row_sd` = standard deviation across the 30 conditions
+- If `row_sd = 0`, the row is set to 0 (documented in code)
+
+---
+
+### 3. Hierarchical Clustering
+
+- **Distance metric:** Euclidean  
+- **Linkage method:** ward.D2  
+- Cluster **genes only (rows)**  
+- Columns remain in original order  
+
+---
+
+### 4. Cluster Assignment
+
+- Cut dendrogram at **k = 4**
+- Assign cluster labels **1–4** using `cutree()`
+
+---
+
+## Expected Outputs
+
+All outputs are written to the `results/` directory.
+
+---
+
+### 1️⃣ Clustered Heatmap
+
+**File:**
+```
+results/cv_top200_cluster_heatmap.pdf
+```
+
+**Specifications:**
+
+| Property | Value |
+|-----------|--------|
+| Data | Log2 ratios → row-wise Z-score |
+| Rows | Hierarchical clustering (Euclidean, ward.D2) |
+| Columns | First 30 stress conditions, original order |
+| Annotation | k = 4 cluster color bar |
+| Size | 8 × 12 inches |
+| Background | White |
+| Device | `pdf(width = 8, height = 12)` |
+
+---
+
+### 2️⃣ Cluster Assignment Table
+
+**File:**
+```
+results/cluster_assignment.tsv
+```
+
+| Column | Description |
+|----------|-------------|
+| gene_id | Yeast gene identifier (e.g., YAL001C) |
+| cluster | Cluster label (1–4) |
+
+**Sorting:**
+- Cluster ascending  
+- gene_id ascending (tie-breaker)
+
+---
+
+## How to Run
+
+1. Ensure the input file exists:
+   ```
+   results/yeast_stress_cv_top200.tsv
+   ```
+
+2. Run the script:
+   ```bash
+   Rscript hw2_cluster_top200.R
+   ```
+
+3. Confirm outputs:
+   ```
+   results/cv_top200_cluster_heatmap.pdf
+   results/cluster_assignment.tsv
+   ```
+
+---
+
+## Interpretation (Required for Submission)
+
+Provide **exactly 4 sentences**, one per cluster, describing the biological meaning of each cluster based on observed expression patterns.
+
+Example structure:
+
+- **Cluster 1:** Genes broadly induced across multiple stress conditions, consistent with general environmental stress response (ESR) activation.  
+- **Cluster 2:** Genes consistently repressed under stress, likely associated with growth-related or ribosomal functions.  
+- **Cluster 3:** Genes specifically induced under heat or oxidative stress conditions, suggesting pathway-specific activation.  
+- **Cluster 4:** Genes with mixed or transient patterns, possibly representing regulatory or condition-specific processes.  
+
+If GO enrichment is not performed, clearly state that interpretation is based on expression patterns alone.
+
+---
+
+## Grading Criteria
+
+| Criterion | Weight | Description |
+|------------|---------|------------|
+| Prompt Quality | 40% | Correct Z-score formula, clustering method (Euclidean + ward.D2), k=4 cutree, column handling, output specifications |
+| Code Correctness | 40% | Accurate normalization, clustering, cutree, and both files generated |
+| Result Interpretation | 20% | Clear, biologically reasonable description of all four clusters |
+
+---
+
+## Project Structure
+
+```
+.
+├── hw2_cluster_top200.R
+├── README.md
+└── results/
+    ├── yeast_stress_cv_top200.tsv
+    ├── cv_top200_cluster_heatmap.pdf
+    └── cluster_assignment.tsv
+```
+
+---
+
+## Notes
+
+- Ensure only numeric expression columns are used for calculations.
+- Use deterministic clustering (no randomness).
+- Explicitly control PDF device size.
+- Verify normalization was **row-wise**, not column-wise.
+- Document any assumptions in comments inside your R script.
+
+---
